@@ -17,7 +17,8 @@ class Booking extends Model
     protected $fillable = [
         'location',
         'time',
-        'number'
+        'number',
+        'vaccine',
     ];
 
     /**

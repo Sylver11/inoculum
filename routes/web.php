@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,18 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/login', function () {
-    return view('welcome');
+Route::get('/', function () {
+    return view('index');
 });
 
-Route::get('/successfully-made-a-booking', function () {
-    return view('welcome');
-});
-
-Route::get('/make-a-booking', function () {
-    return view('welcome');
-});
-
-Route::get('/modify-bookings', function () {
-    return view('welcome');
-});
+Route::get('/booking/create', [BookingController::class, 'create']);
+Route::post('/booking', [BookingController::class, 'store']);
