@@ -20,5 +20,6 @@ Route::get('/', function () {
 
 Route::get('/booking/create', [BookingController::class, 'create']);
 Route::get('/booking/get-config', [BookingController::class, 'getConfig']);
-Route::get('/booking/get-available-slots', [BookingController::class, 'getAvailableSlots']);
+Route::get('/booking/get-fully-booked-dates', [BookingController::class, 'getFullyBookedDates']);
+Route::get('/booking/get-booked-slots-by-date', [BookingController::class, 'getBookedSlotsByDate']);
 Route::post('/booking', [BookingController::class, 'store']);

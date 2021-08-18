@@ -9,6 +9,10 @@ class Booking extends Model
 {
     use HasFactory;
 
+    // TODO 
+    // datetime needs to be unique 
+    // cast datetime to include time
+
     /**
      * The attributes that are mass assignable.
      *
@@ -16,7 +20,7 @@ class Booking extends Model
      */
     protected $fillable = [
         'location',
-        'time',
+        'datetime',
         'number',
         'vaccine',
     ];
@@ -27,7 +31,7 @@ class Booking extends Model
      * @var array
      */
     protected $casts = [
-        'time' => 'datetime:Y-m-d',
+        'datetime' => 'datetime:Y-m-d',
     ];
 
     /**

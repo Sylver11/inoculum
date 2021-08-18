@@ -6,17 +6,6 @@
   <script src="{{ asset('js/vendor/jquery.datetimepicker.full.min.js') }}"></script>
   <script src="{{ asset('js/create.js') }}"></script>
 @endpush
-
-    <div class="alert alert-danger">
-        <ul>
-
-            @php
-            var_dump($vaccines);
-        @endphp
-
-        </ul>
-    </div>
-
 @if ($errors->any())
     <div class="alert alert-danger">
         <ul>
@@ -44,12 +33,6 @@
     <label for="email" class="col-sm-2 col-form-label">Email</label>
     <div class="col-sm-10">
       <input name="email" type="email" class="form-control" id="email" value="{{ old('email') }}"> 
-    </div>
-  </div>
-  <div class="row mb-3">
-    <label for="phone" class="col-sm-2 col-form-label">Phone</label>
-    <div class="col-sm-10">
-      <input name="phone" type="text" class="form-control" id="phone" value="{{ old('phone') }}"> 
     </div>
   </div>
   <div class="row mb-3">

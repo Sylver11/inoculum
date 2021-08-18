@@ -1,80 +1,50 @@
-var g_settings;
-// $.datetimepicker({
-// 	format:'d/m/Y H:i', minDate:'0',
-// })
-// var setDefaults = function( currentDateTime ){
-//   this.setOptions({
-//       minDate:'0',
-//       format:'d/m/Y H:i'
-//   });
-// };
+var g_isSetAllowedTimes = false;
+var g_Settings;
+var g_fullyBookedDates;
 
-Object.size = function(obj) {
-  var size = 0,
-    key;
-  for (key in obj) {
-    if (obj.hasOwnProperty(key)) size++;
+function showAllowedDates() {
+  g_fullyBookedDates.forEach(function(item, index) {
+    item = new Date(item);
+    $('.xdsoft_date[data-date=' + item.getDate()
+    + '][data-month=' + item.getMonth()
+    + '][data-year=' + item.getFullYear() + ']')
+    .addClass('xdsoft_disabled');
+  })
+  if(!g_isSetAllowedTimes){
+    $('.xdsoft_time').addClass('xdsoft_disabled');
   }
-  return size;
-};
-
-function reconsileSettings(){
-    // var settings = {format:'d/m/Y H:i', minDate:'0',};
-    // settings['disabledDays'] = g_settings['dates_closed'];
-    // console.log(g_settings)
-    // console.log(settings)
-    return function( currentDateTime ){
-      var size = Object.size(g_settings);
-      for ( var i = 0, l =  size; i < l; i++ ) {
-        
-        console.log(g_settings[ i ])
-      }
-      this.setOptions({
-          minDate:'0',
-          format:'d/m/Y H:i'
-      });
-      
-    }
-    //return Settings;
-
-//
 }
+
+var showAllowedTimes = function( currentDateTime, $i ){
+  var t = this;
+  $.get('/booking/get-booked-slots-by-date', function(bookedSlots) {
+    bookedSlots = ['14:15','15:45']
+    allowedTimes = g_Settings['allowTimes'];
+    allowedTimes = allowedTimes.filter( ( el ) => !bookedSlots.includes( el ) );
+    // console.log(allowedTimes);
+    $('.xdsoft_time').removeClass('xdsoft_disabled');
+    g_isSetAllowedTimes = true;
+    t.setOptions({allowTimes:allowedTimes});
+    t.setOptions({timepicker:true});
+    $i.datetimepicker('show');
+  })
+};
 
 $.when(
     $.get('/booking/get-config', function(settings) {
-      g_settings = settings;
+      g_Settings = settings;
     }),
-    // $.get('/booking/get-available-slots', function(slots) {
-    //   globalStore.slots = slots;
-    // }),
+    $.get('/booking/get-fully-booked-dates', function(dates) {
+      g_fullyBookedDates = ['2021-08-18','2021-08-29'];
+    }),
   ).then(function() {
-      console.log(g_settings)
-      var Settings = reconsileSettings();
-      $('#datetime').datetimepicker({onShow:Settings});
-    // $('#datetime').datetimepicker({
-    //     // i18n:{
-    //     //  en:{
-    //       months:[
-    //        'Januar','Februar','März','April',
-    //        'Mai','Juni','Juli','August',
-    //        'September','Oktober','November','Dezember',
-    //       ],
-    //       dayOfWeek:["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-    //     //  },
-    //     // },
-    //     format:'d/m/Y H:i',
-    //     minDate:'0',
-    //     allowTimes:[
-    //         '12:00', '13:00', '15:00',
-    //         '17:00', '17:05', '17:20', '19:00', '20:00'
-    //        ],
-    //     disabledDates: ['30/08/2021'],
-    // });
-
-  });
-
-
-
-
-
-
+      $('#datetime').datetimepicker({
+        onGenerate:showAllowedDates,
+        disabledWeekDays:[0, 3, 4],
+        minDate:0,
+        defaultTime:'00:00',
+        format:'Y-m-d H:i',
+        timepicker:false,
+        onSelectDate:showAllowedTimes,
+  })
+})

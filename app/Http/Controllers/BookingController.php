@@ -8,11 +8,9 @@ use App\Models\Booking;
 class BookingController extends Controller {
 
     public function __construct(
-        // Config $config
         // BookingRepository $bookings
         ) {
             $this->config = config('constant.booking');
-        // $this->config = $config::get('constant.booking');
         // $this->bookings = $bookings;
     }
 
@@ -20,19 +18,21 @@ class BookingController extends Controller {
         return response()->json($this->config['types']);
     }
 
-    // public function getAvailableSlots(Request $request)
-    // {
-    //     $all = $this->orders->all();
+    public function getFullyBookedDates(Request $request)
+    {
+        // Retrieves all booked dates (only date) from the current date onwards
+        // $bookedDates = $this->bookings->where();
+        $bookedDates = ['dummyString' => 'something','dummyString' => 'something', ];
+        return response()->json($this->config['types']);
+    }
 
-    //     return View::make('orders', compact('all'));
-    // }
-
-    // public function getAvailableTimes(Request $request)
-    // {
-    //     $all = $this->orders->all();
-
-    //     return View::make('orders', compact('all'));
-    // }
+    public function getBookedSlotsByDate(Request $request)
+    {
+        // Retrieves all booked slots per date specified
+        // $bookedSlots = $this->bookings->where();
+        $bookedSlots = 'dummyString';
+        return response()->json($this->config['types']);
+    }
 
 
     // Return booking form view with configs
@@ -70,6 +70,9 @@ class BookingController extends Controller {
 
         // Add patient id to request object
         $request->request->add(['patient_id' => $patient->getId()]);
+
+        // Autogenerate a random int and add it to request object
+        //$request->request->add(['number' => rand(10, 10)]);
         
         //  Store data in database
         Booking::create($request->all());
@@ -77,5 +80,4 @@ class BookingController extends Controller {
         // Return success message
         return back()->with('success', 'We have received your message and would like to thank you for writing to us.');
     }
-
 }

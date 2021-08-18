@@ -10,6 +10,9 @@ class Patient extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    // TODO
+    // need to add unqiue contstraint on email including the migration script
+
     /**
      * The attributes that are mass assignable.
      *
