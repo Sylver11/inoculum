@@ -31,6 +31,18 @@ return [
                 ['Sinopharm', True, 1, 2],
                 ['Moderna', False, 1, 2]
             ]),
+            'months_open' => (array) env('BOOKING_MONTHS_OPEN', 
+                ['January','February','March','April','May',
+                'June','July','August','September','October',
+                'November','December']),
+            'allowTimes' => (array) env('BOOKING_HOURS_OPEN',
+                [7,8,9,10,11,12,14,15,16]),
+            'days_open' => (array) env('BOOKING_DAYS_OPEN'),
+                ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+            'dates_closed' => (array) env('BOOKING_DATES_CLOSED',
+                ['01/01/2021','21/03/2021','22/03/2021','02/04/2021',
+                    '04/04/2021','10/12/2021','25/12/2021','26/12/2021',
+                    '27/12/2021']),
         ],
     ],
 ];

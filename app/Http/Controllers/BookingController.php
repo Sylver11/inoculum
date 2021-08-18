@@ -16,7 +16,11 @@ class BookingController extends Controller {
         // $this->bookings = $bookings;
     }
 
-    // public function getAvailableDates(Request $request)
+    public function getConfig(Request $request){
+        return response()->json($this->config['types']);
+    }
+
+    // public function getAvailableSlots(Request $request)
     // {
     //     $all = $this->orders->all();
 
@@ -44,19 +48,33 @@ class BookingController extends Controller {
     public function store(Request $request) {
 
         // Form validation
-        $this->validate($request, [
+        $validated = $request->validate([
             'firstname' => 'required',
             'secondname' => 'required',
             'email' => 'required|email',
             'location' => 'required',
-            'time'=>'required',
+            'datetime'=>'required',
             'vaccine' => 'required',
          ]);
 
+        // Check if patient with same email already exists otherwise create one
+        $patient = Patient::where('email', '=', Input::get('email'))->first();
+        if ($patient === null) {
+            $patient = Patient::create($request->all());
+        }
+        else {
+            // Check whether the patient already had the vaccine
+            // If not check if the time span between the vaccines is correct
+            // return descriptive error message
+        }
+
+        // Add patient id to request object
+        $request->request->add(['patient_id' => $patient->getId()]);
+        
         //  Store data in database
         Booking::create($request->all());
 
-        // 
+        // Return success message
         return back()->with('success', 'We have received your message and would like to thank you for writing to us.');
     }
 

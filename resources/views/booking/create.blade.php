@@ -1,7 +1,10 @@
-
 <x-layout>
+@push('styles')
+  <link href="{{ asset('css/vendor/jquery.datetimepicker.min.css') }}" rel="stylesheet">
+@endpush
 @push('scripts')
-    <script src="/js/create.js"></script>
+  <script src="{{ asset('js/vendor/jquery.datetimepicker.full.min.js') }}"></script>
+  <script src="{{ asset('js/create.js') }}"></script>
 @endpush
 
     <div class="alert alert-danger">
@@ -64,15 +67,9 @@
     </div>
   </div>
   <div class="row mb-3">
-    <label for="date" class="col-sm-2 col-form-label">Date</label>
+    <label for="date" class="col-sm-2 col-form-label">Date & Time</label>
     <div class="col-sm-10">
-      <input name="date" type="text" class="form-control datepicker" id="date" value="{{ old('date') }}"> 
-    </div>
-  </div>
-  <div class="row mb-3">
-    <label for="time" class="col-sm-2 col-form-label">Time</label>
-    <div class="col-sm-10">
-      <input name="time" type="text" class="form-control timepicker" id="time" value="{{ old('time') }}"> 
+      <input name="datetime" type="text" id="datetime" class="form-control" value="{{ old('datetime') }}">
     </div>
   </div>
   <fieldset class="row mb-3">

@@ -13,8 +13,23 @@ class CreateInoculumTables extends Migration
      */
     public function up()
     {
-        Schema::create('inoculum_tables', function (Blueprint $table) {
-            $table->id();
+        Schema::create('patients', function (Blueprint $table) {
+            $table->increments('id');
+	    $table->string('firstname');
+	    $table->string('secondname');
+	    $table->string('email');
+            $table->unique('email');
+            $table->string('vaccine');
+            $table->timestamps();
+        });
+        Schema::create('bookings', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('patient_id')->unsigned();
+            $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
+	    $table->integer('number');
+	    $table->string('location');
+	    $table->dateTime('time');
+            $table->string('vaccine');
             $table->timestamps();
         });
     }
@@ -26,6 +41,14 @@ class CreateInoculumTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inoculum_tables');
+	
+        Schema::table('bookings', function(Blueprint $table) {
+            $table->dropForeign('bookings_patient_id_foreign');
+            $table->dropIndex('bookings_patient_id_index');
+            $table->dropColumn('patient_id');
+        }); 
+        Schema::dropIfExists('patients');
+        Schema::dropIfExists('bookings');
+     
     }
 }
