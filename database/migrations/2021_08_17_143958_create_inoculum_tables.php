@@ -34,7 +34,7 @@ class CreateInoculumTables extends Migration
 	        $table->string('location');
 	        $table->dateTime('datetime');
             $table->string('vaccine');
-            $table->string('status');
+            $table->string('status')->default('scheduled');
             $table->timestamps();
         });
     }

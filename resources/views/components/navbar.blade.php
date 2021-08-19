@@ -6,7 +6,9 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
-      <button class="btn btn-outline-danger" type="submit">Cancel My Booking</button>
+      @if(!Request::is('booking/my-bookings/*') && !Request::is('booking/patient-login*'))
+        <a href="/booking/patient-login" class="btn btn-outline-danger" type="button">Cancel My Booking</a>
+      @endif
     </div>
   </div>
 </nav>

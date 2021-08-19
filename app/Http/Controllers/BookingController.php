@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Patient;
 use App\Repository\PatientRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 /**
 * This would be a perfect case to implement an Archtictual Decision Record (ADR)
@@ -29,10 +30,22 @@ class BookingController extends Controller {
     public function getFullyBookedDates(Request $request)
     {
         // Retrieves all booked dates (only date) from the current date onwards
-        // $bookedDates = $this->bookings->where();
-        $bookedDates = ['dummyString' => 'something','dummyString' => 'something', ];
-        // return response()->json($this->bookingRepository->all(), 200);
-        return response()->json($this->config['types']);
+        // groups by date but need to handle current date special because
+        // could be less appointments than specified in the config but already past 
+        // that time
+
+        $today = date("Y-m-d");
+        $bookedDates = DB::table('bookings')
+            ->select(DB::raw('DATE(datetime) as date'), DB::raw('count(*) as count'))
+            ->where('datetime', '>', $today)
+            ->where('status', 'scheduled')
+            ->groupBy('date', 'status')
+            ->get();
+        // foreach($bookedDates as $Dates){
+            // here compare them with the configs and if config length for that date is the
+            // same as the the count of the date the add the fully booked dates
+        // }
+        return response()->json($bookedDates);
     }
 
     public function getBookedSlotsByDate(Request $request)
@@ -52,6 +65,10 @@ class BookingController extends Controller {
         ]);
     }
 
+    public function patientLogin(Request $request) {
+        return view('booking/patient_login');
+    }
+
     // Return bookings per patient by firstname, secondname and email
     public function myBookings($firstname, $secondname, $email) {
 
@@ -61,12 +78,16 @@ class BookingController extends Controller {
         $matchThese = [
             'firstname' => $firstname,
             'secondname' => $secondname,
-            'email' => $email];
-        $patient = Patient::where($matchThese)->first()->load('bookings');
+            'email' => $email
+        ];
+        
+        // TODO
+        // The error message does not pull through    
+        $patient = Patient::where($matchThese)->first();
         if ($patient === null){
-            return view('errors.could_not_retrieve_bookings', [], 500);
+            return view('errors.could_not_retrieve_bookings')->with('message', 'Could not retrieve booking details');
         }
-        return view('booking/my_bookings', ['patient'=>$patient]);
+        return view('booking/my_bookings', ['patient'=>$patient->load('bookings')]);
       }
 
     // Store form data
@@ -82,7 +103,7 @@ class BookingController extends Controller {
             'secondname' => 'required',
             'email' => 'required|email',
             'location' => 'required',
-            'datetime'=>'required',
+            'datetime'=>'required|after:yesterday',
             'vaccine' => 'required',
          ]);
 
@@ -97,10 +118,13 @@ class BookingController extends Controller {
             // return descriptive error message
         }
 
-        //  Store data in database while adding patient id and random booking number 
+        // Store data in database while adding patient id and random booking number 
+        do {
+            $bookingNumber = mt_rand( 10000000, 99999999 );
+         } while ( Booking::where( 'number', '=', $bookingNumber )->exists() );
         Booking::create(array_merge(
             $request->all(),
-            ['patient_id' => $patient->id, 'number' => rand(10, 10)]
+            ['patient_id' => $patient->id, 'number' => $bookingNumber]
         ));
 
         // Return redirect to my bookings site with success message
@@ -109,5 +133,18 @@ class BookingController extends Controller {
             'secondname' => $patient->secondname,
             'email' => $patient->email
         ])->with('message', 'Successfully added booking');
+    }
+
+    public function cancelBooking(Request $request) {
+        $validated = $request->validate([
+            'number' => 'required',
+         ]);
+        $booking = Booking::where('number', $request->get('number'))->first()->load('patient');
+        $booking->update(['status' => 'cancelled']);
+        return redirect()->route('myBookings', [
+            'firstname' => $booking->patient->firstname,
+            'secondname' => $booking->patient->secondname,
+            'email' => $booking->patient->email
+        ])->with('message', 'Successfully cancelled booking');
     }
 }

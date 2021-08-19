@@ -35,6 +35,7 @@ $.when(
       g_Settings = settings;
     }),
     $.get('/booking/get-fully-booked-dates', function(dates) {
+      console.log(dates)
       g_fullyBookedDates = ['2021-08-18','2021-08-29'];
     }),
   ).then(function() {
