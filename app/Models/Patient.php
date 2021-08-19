@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Patient extends Authenticatable
+class Patient extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
 
     // TODO
     // need to add unqiue contstraint on email including the migration script
@@ -33,15 +32,4 @@ class Patient extends Authenticatable
     {
         return $this->hasMany(Booking::class)->latest();
     }
-
-
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    // protected $casts = [
-    //     'email_verified_at' => 'datetime',
-    // ];
 }

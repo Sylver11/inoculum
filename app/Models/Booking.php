@@ -19,10 +19,12 @@ class Booking extends Model
      * @var array
      */
     protected $fillable = [
+        'patient_id',
         'location',
         'datetime',
         'number',
         'vaccine',
+        'status'
     ];
 
     /**
@@ -31,7 +33,7 @@ class Booking extends Model
      * @var array
      */
     protected $casts = [
-        'datetime' => 'datetime:Y-m-d',
+        'datetime' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**
