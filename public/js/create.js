@@ -17,10 +17,11 @@ function showAllowedDates() {
 
 var showAllowedTimes = function( currentDateTime, $i ){
   var t = this;
-  var date = new Date(currentDateTime)
+  const offset = currentDateTime.getTimezoneOffset()
+  currentDateTime = new Date(currentDateTime.getTime() - (offset*60*1000))
+  currentDateTime = currentDateTime.toISOString().split('T')[0]
   t.setOptions({timepicker:false});
-  $.get('/booking/get-booked-slots-by-date', { date: date},function(availableSlots) {
-    console.log(availableSlots)
+  $.get('/booking/get-booked-slots-by-date', { date: currentDateTime},function(availableSlots) {
     g_isSetAllowedTimes = true;
     t.setOptions({allowTimes:Object.values(availableSlots)});
     t.setOptions({timepicker:true});
@@ -33,6 +34,7 @@ $.when(
       g_Settings = settings;
     }),
     $.get('/booking/get-fully-booked-dates', function(dates) {
+      console.log(dates);
       g_fullyBookedDates = ['2021-08-18','2021-08-29'];
     }),
   ).then(function() {

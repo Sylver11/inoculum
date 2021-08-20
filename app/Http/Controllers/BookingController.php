@@ -58,6 +58,7 @@ class BookingController extends Controller {
         $validated = $request->validate([
             'date' => 'required',
          ]);
+        $date = $request->get('date');
         $bookedSlots = DB::table('bookings')
             ->select(DB::raw('TIME(datetime) as time'))
             ->where(DB::raw('DATE(datetime)'), '=', $request->get('date'))
