@@ -37,23 +37,37 @@ class BookingController extends Controller {
         $today = date("Y-m-d");
         $bookedDates = DB::table('bookings')
             ->select(DB::raw('DATE(datetime) as date'), DB::raw('count(*) as count'))
-            ->where('datetime', '>', $today)
+            ->where('datetime', '>=', $today)
             ->where('status', 'scheduled')
             ->groupBy('date', 'status')
-            ->get();
-        // foreach($bookedDates as $Dates){
-            // here compare them with the configs and if config length for that date is the
-            // same as the the count of the date the add the fully booked dates
-        // }
+            ->get();        
+        $fullyBookedDates = array();
+        foreach($bookedDates as $date){
+            $bookingCount = $date->count;
+            $dayOfWeek = date('w', strtotime($date->date));
+            $allowTimesCount = count($this->config['types']['allowTimes'][$dayOfWeek]);
+            if($bookingCount >= $allowTimesCount){
+                array_push($fullyBookedDates, $date->date);
+            }
+        }
         return response()->json($bookedDates);
     }
 
     public function getBookedSlotsByDate(Request $request)
     {
-        // Retrieves all booked slots per date specified
-        // $bookedSlots = $this->bookings->where();
-        $bookedSlots = 'dummyString';
-        return response()->json($this->config['types']);
+        $validated = $request->validate([
+            'date' => 'required',
+         ]);
+        $bookedSlots = DB::table('bookings')
+            ->select(DB::raw('TIME(datetime) as time'))
+            ->where(DB::raw('DATE(datetime)'), '=', $request->get('date'))
+            ->where('status', 'scheduled')
+            ->get()
+            ->pluck('time')
+            ->toArray();
+        $dayOfWeek = date('w', strtotime($request->get('date')));
+        $times = $this->config['types']['allowTimes'][$dayOfWeek];
+        return array_diff($times, $bookedSlots);
     }
 
 

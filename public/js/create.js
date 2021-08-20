@@ -17,14 +17,12 @@ function showAllowedDates() {
 
 var showAllowedTimes = function( currentDateTime, $i ){
   var t = this;
-  $.get('/booking/get-booked-slots-by-date', function(bookedSlots) {
-    bookedSlots = ['14:15','15:45']
-    allowedTimes = g_Settings['allowTimes'];
-    allowedTimes = allowedTimes.filter( ( el ) => !bookedSlots.includes( el ) );
-    // console.log(allowedTimes);
-    $('.xdsoft_time').removeClass('xdsoft_disabled');
+  var date = new Date(currentDateTime)
+  t.setOptions({timepicker:false});
+  $.get('/booking/get-booked-slots-by-date', { date: date},function(availableSlots) {
+    console.log(availableSlots)
     g_isSetAllowedTimes = true;
-    t.setOptions({allowTimes:allowedTimes});
+    t.setOptions({allowTimes:Object.values(availableSlots)});
     t.setOptions({timepicker:true});
     $i.datetimepicker('show');
   })
@@ -35,7 +33,6 @@ $.when(
       g_Settings = settings;
     }),
     $.get('/booking/get-fully-booked-dates', function(dates) {
-      console.log(dates)
       g_fullyBookedDates = ['2021-08-18','2021-08-29'];
     }),
   ).then(function() {
@@ -44,7 +41,7 @@ $.when(
         disabledWeekDays:[0, 3, 4],
         minDate:0,
         defaultTime:'00:00',
-        format:'Y-m-d H:i',
+        format:'Y-m-d H:i:s',
         timepicker:false,
         onSelectDate:showAllowedTimes,
   })
