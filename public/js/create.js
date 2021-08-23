@@ -3,6 +3,9 @@ var g_Settings;
 var g_fullyBookedDates;
 
 function showAllowedDates() {
+  if(g_Settings['disabledDates']){
+    g_fullyBookedDates = g_fullyBookedDates.concat(g_Settings['disabledDates']);
+  }
   g_fullyBookedDates.forEach(function(item, index) {
     item = new Date(item);
     $('.xdsoft_date[data-date=' + item.getDate()
@@ -22,10 +25,17 @@ var showAllowedTimes = function( currentDateTime, $i ){
   currentDateTime = currentDateTime.toISOString().split('T')[0]
   t.setOptions({timepicker:false});
   $.get('/booking/get-booked-slots-by-date', { date: currentDateTime},function(availableSlots) {
-    g_isSetAllowedTimes = true;
-    t.setOptions({allowTimes:Object.values(availableSlots)});
-    t.setOptions({timepicker:true});
+    if(availableSlots.length <= 0){
+      g_isSetAllowedTimes = false;
+    } else{
+      g_isSetAllowedTimes = true;
+      t.setOptions({allowTimes:Object.values(availableSlots)});
+      t.setOptions({timepicker:true});
+    }
     $i.datetimepicker('show');
+  })
+  .fail(function(xhr, status, error) {
+    alert( error );
   })
 };
 
@@ -33,14 +43,13 @@ $.when(
     $.get('/booking/get-config', function(settings) {
       g_Settings = settings;
     }),
-    $.get('/booking/get-fully-booked-dates', function(dates) {
-      console.log(dates);
-      g_fullyBookedDates = ['2021-08-18','2021-08-29'];
+    $.get('/booking/get-fully-booked-dates', function(fullyBookedDates) {
+      g_fullyBookedDates = Object.values(fullyBookedDates);
     }),
   ).then(function() {
       $('#datetime').datetimepicker({
         onGenerate:showAllowedDates,
-        disabledWeekDays:[0, 3, 4],
+        disabledWeekDays:Object.values(g_Settings['disabledWeekDays']),
         minDate:0,
         defaultTime:'00:00',
         format:'Y-m-d H:i:s',

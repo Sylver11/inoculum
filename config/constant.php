@@ -6,10 +6,12 @@ return [
     |--------------------------------------------------------------------------
     | Booking config types and their default values
     |--------------------------------------------------------------------------
+    | TODO
+    |
+    | ****The below explanations are outdated please do not take for granted****
     |
     | These values must be set in the .env file as string as following:
     | BOOKING_LOCATION; array; vaccination site names 
-    | BOOKING_INTERVAL; int; specify session interval in minutes
     | BOOKING_VACCINE; multidimensional array; with each nested array representing
     |   a vaccine with the first entry being the vaccine name and second entry 
     |   specifying availability denoted in boolean of True or False. The remaining entries
@@ -25,16 +27,14 @@ return [
 
         'types' => [
             'locations' => (array) env('BOOKING_LOCATIONS', ['Uhingen']),
-            'interval' => env('BOOKING_INTERVAL', 15),
             'vaccines' => (array) env('BOOKING_VACCINES', [
-                ['AstraZeneca', True, 2],
-                ['Sinopharm', True, 1, 2],
-                ['Moderna', False, 1, 2]
+                ['AstraZeneca', True, 90, 2],
+                ['Sinopharm', True, 21, 1, 2],
+                ['Moderna', False, 28, 1, 2],
+                ['Pfizer-BioNTech', False, 21, 1, 2]
             ]),
-            'months_open' => (array) env('BOOKING_MONTHS_OPEN', 
-                ['January','February','March','April','May',
-                'June','July','August','September','October',
-                'November','December']),
+            'disabledWeekDays' => (array) env('BOOKING_DISABLED_WEEK_DAYS',
+                [0]),
             'allowTimes' => (array) env('BOOKING_HOURS_OPEN',
                 [
                     0 => [],
@@ -102,12 +102,10 @@ return [
                         '12:00:00','12:15:00','12:30:00','12:45:00',
                     ]
                 ]),
-            'days_open' => (array) env('BOOKING_DAYS_OPEN'),
-                ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
-            'dates_closed' => (array) env('BOOKING_DATES_CLOSED',
-                ['01/01/2021','21/03/2021','22/03/2021','02/04/2021',
-                    '04/04/2021','10/12/2021','25/12/2021','26/12/2021',
-                    '27/12/2021']),
+            'disabledDates' => (array) env('BOOKING_DISABLED_DATES',
+                ['2021-01-01','2021-03-21','2021-03-22','2021-04-02',
+                    '2021-04-04','2021-12-10','2021-12-25','2021-12-26',
+                    '2021-12-27']),
         ],
     ],
 ];

@@ -65,7 +65,7 @@
                 {{ $vaccine[0]}}
             </label>
             <div class="col-sm-10">
-            @foreach (array_slice($vaccine,2) as $entry)
+            @foreach (array_slice($vaccine,3) as $entry)
               <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="vaccine" id="gridRadios1" value="{{ $vaccine[0].(strval($entry)) }}">           
               <label class="form-check-label" for="gridRadios1">
